@@ -28,13 +28,19 @@ export default function Signup() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl border-2 border-gray-200 shadow-xl p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Create your account</h1>
-            <p className="text-gray-600">Join and start planning your trips</p>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 relative overflow-hidden">
+      <div className="absolute -top-20 -right-20 w-72 h-72 bg-gray-900 opacity-5 rounded-full"/>
+      <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-gray-900 opacity-5 rounded-full"/>
+      <div className="relative flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="bg-white rounded-2xl border-2 border-gray-200 shadow-xl p-8">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 border border-gray-200 mb-4">
+                <span className="text-xs font-medium text-gray-700">Travel Planner</span>
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Create your account</h1>
+              <p className="text-gray-600">Join and start planning your trips</p>
+            </div>
 
           <form onSubmit={onSubmit} className="space-y-5">
             <div>
@@ -106,10 +112,11 @@ export default function Signup() {
             </button>
           </form>
 
-          <p className="text-center text-gray-600 mt-6">
-            Have an account?{' '}
-            <Link to="/login" className="font-semibold text-gray-900 hover:text-gray-700 transition-colors">Log in</Link>
-          </p>
+            <p className="text-center text-gray-600 mt-6">
+              Have an account?{' '}
+              <Link to="/login" className="font-semibold text-gray-900 hover:text-gray-700 transition-colors">Log in</Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

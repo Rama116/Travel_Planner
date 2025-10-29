@@ -39,41 +39,84 @@ export default function Profile() {
   }, [trips, past])
 
   return (
-    <div className="space-y-6">
-      <div className="card border rounded-2xl p-6 bg-white/80 backdrop-blur">
-        <div className="flex items-center gap-4">
-          <div className="h-14 w-14 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 font-semibold">
-            {user?.name?.slice(0,1) || 'U'}
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 relative overflow-hidden">
+      {/* decorative blobs to match app theme */}
+      <div className="absolute -top-20 -right-20 w-72 h-72 bg-gray-900 opacity-5 rounded-full pointer-events-none" />
+      <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-gray-900 opacity-5 rounded-full pointer-events-none" />
+
+      {/* centered page container */}
+      <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
+        {/* profile card */}
+        <div className="bg-white/80 backdrop-blur border-2 border-gray-200 rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="h-14 w-14 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 font-semibold text-lg">
+              {user?.name?.slice(0,1) || 'U'}
+            </div>
+            <div>
+              <div className="text-xl font-semibold text-gray-900">{user?.name || 'Your Profile'}</div>
+              <div className="text-sm text-gray-600">{user?.email}</div>
+            </div>
+            <div className="ml-auto flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-2">
+                <div className="text-sm text-gray-500">View:</div>
+                {['All','Upcoming','Past'].map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setTab(t)}
+                    className={`px-3 py-1.5 rounded-full border ${tab === t ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-          <div>
-            <div className="text-xl font-semibold text-gray-900">{user?.name || 'Your Profile'}</div>
-            <div className="text-sm text-gray-600">{user?.email}</div>
+
+          {/* mobile tabs under profile info */}
+          <div className="mt-4 flex gap-2 sm:hidden">
+            {['All','Upcoming','Past'].map((t) => (
+              <button
+                key={t}
+                onClick={() => setTab(t)}
+                className={`px-3 py-1.5 rounded-full border ${tab === t ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+              >
+                {t}
+              </button>
+            ))}
           </div>
         </div>
-        <div className="mt-4 flex gap-2">
-          {['All','Upcoming','Past'].map((t)=>(
-            <button key={t} onClick={()=>setTab(t)} className={`px-3 py-1.5 rounded-full border ${tab===t? 'bg-gray-900 text-white border-gray-900':'bg-white text-gray-700 hover:bg-gray-50'}`}>{t}</button>
+
+        {/* comparison chart card */}
+        <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-sm">
+          <div className="font-medium text-gray-800 mb-2">Past Trips Comparison</div>
+          <div className="h-64">
+            <Bar
+              data={compareData}
+              options={{
+                plugins: { legend: { display: false } },
+                responsive: true,
+                maintainAspectRatio: false,
+              }}
+            />
+          </div>
+        </div>
+
+        {/* trips grid */}
+        <div className="grid md:grid-cols-2 gap-4">
+          {filtered.map((trip) => (
+            <div key={trip._id} className="bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-sm">
+              {/* keep TripCard as-is inside a card wrapper for consistent spacing */}
+              <TripCard trip={trip} />
+            </div>
           ))}
-        </div>
-      </div>
 
-      <div className="card border rounded-2xl p-4 bg-white">
-        <div className="font-medium mb-2">Past Trips Comparison</div>
-        <div className="h-64">
-          <Bar data={compareData} options={{ plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false }} />
+          {!filtered.length && (
+            <div className="col-span-full text-gray-600 border-2 border-gray-200 rounded-2xl p-6 bg-white">
+              No trips to show here yet.
+            </div>
+          )}
         </div>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-4 mt-4">
-        {filtered.map((trip) => (
-          <TripCard key={trip._id} trip={trip} />
-        ))}
-        {!filtered.length && (
-          <div className="col-span-full text-gray-600 border rounded-2xl p-6 bg-white">No trips to show here yet.</div>
-        )}
       </div>
     </div>
   )
 }
-
-

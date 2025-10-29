@@ -118,136 +118,151 @@ export default function TripDetail() {
   if (!trip) return <div>Loading...</div>
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-2xl border card bg-gradient-to-br from-white to-gray-50 p-6">
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">{trip.title}</h1>
-            <div className="text-sm text-gray-600 mt-1">{trip.destinations?.map(d=>d.name).join(', ')}</div>
-            {(trip.tripStartDate || trip.tripEndDate) && (
-              <div className="text-sm text-gray-600 mt-1">
-                Duration: {trip.tripStartDate ? new Date(trip.tripStartDate).toLocaleDateString() : '—'} → {trip.tripEndDate ? new Date(trip.tripEndDate).toLocaleDateString() : '—'}
-              </div>
-            )}
-          </div>
-          <div className="flex gap-2">
-            {!showDeleteConfirm ? (
-              <button 
-                onClick={() => setShowDeleteConfirm(true)}
-                className="px-4 py-2 rounded-md border border-red-300 text-red-600 hover:bg-red-50"
-              >
-                Delete Trip
-              </button>
-            ) : (
-              <div className="flex gap-2">
-                <button 
-                  onClick={handleDelete}
-                  className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700"
-                >
-                  Confirm Delete
-                </button>
-                <button 
-                  onClick={() => setShowDeleteConfirm(false)}
-                  className="px-4 py-2 rounded-md border text-gray-700 hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 relative overflow-hidden">
+      {/* decorative blobs */}
+      <div className="absolute -top-20 -right-20 w-72 h-72 bg-gray-900 opacity-5 rounded-full pointer-events-none" />
+      <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-gray-900 opacity-5 rounded-full pointer-events-none" />
 
-      <div className="rounded-2xl border card bg-white p-4">
-        <div className="flex items-center justify-between">
-          <div className="font-medium">Days</div>
-          <div className="flex items-center gap-2">
-            <div className="text-sm text-gray-600">{dayCount} days</div>
-            <button onClick={addDay} className="px-2 py-1 rounded-md border text-sm hover:bg-gray-50">+ Add Day</button>
-          </div>
-        </div>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {Array.from({ length: dayCount }).map((_, i) => (
-            <button key={i} onClick={()=>setSelectedDay(i+1)} className={`px-3 py-1.5 rounded-full border ${selectedDay === (i+1) ? 'bg-gray-900 text-white border-gray-900' : 'bg-white hover:bg-gray-50'}`}>Day {i+1}</button>
-          ))}
-        </div>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="card border rounded-2xl p-4 bg-white">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="font-medium">Itinerary · Day {selectedDay}</h2>
-            <div className="flex flex-wrap gap-2 justify-end">
-              <select value={newActivityType} onChange={(e)=>setNewActivityType(e.target.value)} className="border rounded-md px-2 py-1">
-                {['food','travel','sightseeing','stay','other'].map(t => <option key={t} value={t}>{t}</option>)}
-              </select>
-              <input value={newActivity} onChange={(e)=>setNewActivity(e.target.value)} placeholder="Add activity" className="border rounded-md px-2 py-1 min-w-[180px]"/>
-              <input value={newActivityTime} onChange={(e)=>setNewActivityTime(e.target.value)} className="border rounded-md px-2 py-1 w-24"/>
-              <input value={newActivityNotes} onChange={(e)=>setNewActivityNotes(e.target.value)} placeholder="notes" className="border rounded-md px-2 py-1 min-w-[160px]"/>
-              <button onClick={addActivity} className="px-3 py-1.5 bg-gray-900 text-white rounded-md">Add</button>
-            </div>
-          </div>
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="activities">
-              {(provided) => (
-                <div ref={provided.innerRef} {...provided.droppableProps} className="space-y-2">
-                  {activitiesForDay.map((a, idx) => (
-                    <Draggable key={a.id} draggableId={a.id} index={idx}>
-                      {(prov) => (
-                        <div ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps} className="border rounded-md px-3 py-2 bg-white flex items-start justify-between">
-                          <div>
-                            <div className="font-medium capitalize">{a.title}</div>
-                            <div className="text-sm text-gray-600">{a.type} • {a.time}</div>
-                            {a.notes && <div className="text-sm text-gray-600">{a.notes}</div>}
-                          </div>
-                          <div className={`h-2 w-2 rounded-full mt-2 ${a.type==='food'?'bg-red-500':a.type==='travel'?'bg-blue-500':a.type==='sightseeing'?'bg-yellow-500':a.type==='stay'?'bg-green-500':'bg-gray-400'}`}/>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
+      <div className="max-w-6xl mx-auto px-4 py-10 space-y-6">
+        <div className="bg-white/80 backdrop-blur border-2 border-gray-200 rounded-2xl p-6 shadow-sm">
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-2xl font-semibold text-gray-900">{trip.title}</h1>
+              <div className="text-sm text-gray-600 mt-1">{trip.destinations?.map(d=>d.name).join(', ')}</div>
+              {(trip.tripStartDate || trip.tripEndDate) && (
+                <div className="text-sm text-gray-600 mt-1">
+                  Duration: {trip.tripStartDate ? new Date(trip.tripStartDate).toLocaleDateString() : '—'} → {trip.tripEndDate ? new Date(trip.tripEndDate).toLocaleDateString() : '—'}
                 </div>
               )}
-            </Droppable>
-          </DragDropContext>
-        </div>
-
-        <div className="card border rounded-2xl p-4 bg-white">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="font-medium">Expenses · Day {selectedDay}</h2>
-            <div className="flex flex-wrap items-center gap-2 justify-end">
-              <select value={newExpense.category} onChange={(e)=> setNewExpense(s=>({...s, category: e.target.value}))} className="border rounded-md px-2 py-1">
-                {['Flights','Lodging','Transport','Food','Activities','Other'].map(c=> <option key={c}>{c}</option>)}
-              </select>
-              <input type="number" value={newExpense.amount} onChange={(e)=> setNewExpense(s=>({...s, amount: e.target.value}))} className="border rounded-md px-2 py-1 w-24"/>
-              <button onClick={addExpense} className="px-3 py-1.5 bg-gray-900 text-white rounded-md">Add</button>
             </div>
-          </div>
-          <div className="text-sm text-gray-600 mb-2">Total Spent: ${(trip.expenses||[]).reduce((s,e)=>s+Number(e.amount||0),0).toFixed(2)}</div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="h-64">
-              <Bar data={barData} options={{ plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false }} />
-            </div>
-            <div className="h-64">
-              <Pie data={pieData} options={{ plugins: { legend: { position: 'bottom' } }, responsive: true, maintainAspectRatio: false }} />
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="font-medium mb-1">Expenses for this day</div>
-            <div className="space-y-1 text-sm">
-              {expensesForDay.map((e,i)=> (
-                <div key={i} className="flex items-center justify-between border rounded-md px-3 py-1 bg-white">
-                  <div className="text-gray-800">{e.category}</div>
-                  <div className="text-gray-600">${Number(e.amount).toFixed(2)}</div>
+            <div className="flex gap-2">
+              {!showDeleteConfirm ? (
+                <button 
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="px-4 py-2 rounded-md border border-red-300 text-red-600 hover:bg-red-50"
+                >
+                  Delete Trip
+                </button>
+              ) : (
+                <div className="flex gap-2">
+                  <button 
+                    onClick={handleDelete}
+                    className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700"
+                  >
+                    Confirm Delete
+                  </button>
+                  <button 
+                    onClick={() => setShowDeleteConfirm(false)}
+                    className="px-4 py-2 rounded-md border text-gray-700 hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
                 </div>
-              ))}
-              {!expensesForDay.length && <div className="text-gray-500">No expenses for this day.</div>}
+              )}
             </div>
           </div>
         </div>
-      </div>
 
-      
+        <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="font-medium text-gray-900">Days</div>
+            <div className="flex items-center gap-2">
+              <div className="text-sm text-gray-600">{dayCount} days</div>
+              <button onClick={addDay} className="px-2 py-1 rounded-md border text-sm hover:bg-gray-50">+ Add Day</button>
+            </div>
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {Array.from({ length: dayCount }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setSelectedDay(i + 1)}
+                className={`px-3 py-1.5 rounded-full border ${selectedDay === (i + 1) ? 'bg-gray-900 text-white border-gray-900' : 'bg-white hover:bg-gray-50'}`}
+              >
+                Day {i + 1}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="font-medium text-gray-900">Itinerary · Day {selectedDay}</h2>
+              <div className="flex flex-wrap gap-2 justify-end">
+                <select value={newActivityType} onChange={(e)=>setNewActivityType(e.target.value)} className="border-2 border-gray-200 rounded-md px-2 py-1">
+                  {['food','travel','sightseeing','stay','other'].map(t => <option key={t} value={t}>{t}</option>)}
+                </select>
+                <input value={newActivity} onChange={(e)=>setNewActivity(e.target.value)} placeholder="Add activity" className="border-2 border-gray-200 rounded-md px-2 py-1 min-w-[180px]"/>
+                <input value={newActivityTime} onChange={(e)=>setNewActivityTime(e.target.value)} className="border-2 border-gray-200 rounded-md px-2 py-1 w-24"/>
+                <input value={newActivityNotes} onChange={(e)=>setNewActivityNotes(e.target.value)} placeholder="notes" className="border-2 border-gray-200 rounded-md px-2 py-1 min-w-[160px]"/>
+                <button onClick={addActivity} className="px-3 py-1.5 bg-gray-900 text-white rounded-md">Add</button>
+              </div>
+            </div>
+
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Droppable droppableId="activities">
+                {(provided) => (
+                  <div ref={provided.innerRef} {...provided.droppableProps} className="space-y-2">
+                    {activitiesForDay.map((a, idx) => (
+                      <Draggable key={a.id} draggableId={a.id} index={idx}>
+                        {(prov) => (
+                          <div ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps} className="border rounded-md px-3 py-2 bg-white flex items-start justify-between">
+                            <div>
+                              <div className="font-medium capitalize text-gray-900">{a.title}</div>
+                              <div className="text-sm text-gray-600">{a.type} • {a.time}</div>
+                              {a.notes && <div className="text-sm text-gray-600">{a.notes}</div>}
+                            </div>
+                            <div className={`h-2 w-2 rounded-full mt-2 ${a.type==='food'?'bg-red-500':a.type==='travel'?'bg-blue-500':a.type==='sightseeing'?'bg-yellow-500':a.type==='stay'?'bg-green-500':'bg-gray-400'}`}/>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </div>
+
+          <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="font-medium text-gray-900">Expenses · Day {selectedDay}</h2>
+              <div className="flex flex-wrap items-center gap-2 justify-end">
+                <select value={newExpense.category} onChange={(e)=> setNewExpense(s=>({...s, category: e.target.value}))} className="border-2 border-gray-200 rounded-md px-2 py-1">
+                  {['Flights','Lodging','Transport','Food','Activities','Other'].map(c=> <option key={c}>{c}</option>)}
+                </select>
+                <input type="number" value={newExpense.amount} onChange={(e)=> setNewExpense(s=>({...s, amount: e.target.value}))} className="border-2 border-gray-200 rounded-md px-2 py-1 w-24"/>
+                <button onClick={addExpense} className="px-3 py-1.5 bg-gray-900 text-white rounded-md">Add</button>
+              </div>
+            </div>
+
+            <div className="text-sm text-gray-600 mb-2">Total Spent: ${(trip.expenses||[]).reduce((s,e)=>s+Number(e.amount||0),0).toFixed(2)}</div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="h-64">
+                <Bar data={barData} options={{ plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false }} />
+              </div>
+              <div className="h-64">
+                <Pie data={pieData} options={{ plugins: { legend: { position: 'bottom' } }, responsive: true, maintainAspectRatio: false }} />
+              </div>
+            </div>
+
+            <div className="mt-3">
+              <div className="font-medium mb-1 text-gray-900">Expenses for this day</div>
+              <div className="space-y-1 text-sm">
+                {expensesForDay.map((e,i)=> (
+                  <div key={i} className="flex items-center justify-between border rounded-md px-3 py-1 bg-white">
+                    <div className="text-gray-800">{e.category}</div>
+                    <div className="text-gray-600">${Number(e.amount).toFixed(2)}</div>
+                  </div>
+                ))}
+                {!expensesForDay.length && <div className="text-gray-500">No expenses for this day.</div>}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
   )
 }
