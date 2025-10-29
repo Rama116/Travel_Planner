@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+/* App gray/white theme */
+:root {
+  --bg: 245 245 245;
+  --card: 255 255 255;
+  --ink: 31 41 55;
+  --muted: 107 114 128;
+  --accent: 17 24 39;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background-color: rgb(var(--bg));
+  color: rgb(var(--ink));
+}
+
+.card {
+  background-color: rgb(var(--card));
+}
