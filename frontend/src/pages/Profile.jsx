@@ -19,22 +19,67 @@ export default function Profile() {
     api.get('/auth/me').then(({ data }) => setUser(data.user)).catch(()=>{})
   }, [dispatch])
 
-  const { upcoming, past } = useMemo(() => {
-    const now = Date.now()
-    const toRangeEnd = (t) => {
-      const ends = (t.destinations || []).map((d) => new Date(d.endDate).getTime())
-      return ends.length ? Math.max(...ends) : new Date(t.createdAt).getTime()
+  // helper: get trip start & end timestamps
+  const getRange = (t) => {
+    // collect candidate starts and ends
+    const starts = []
+    const ends = []
+
+    if (t.tripStartDate) starts.push(new Date(t.tripStartDate).getTime())
+    if (t.tripEndDate) ends.push(new Date(t.tripEndDate).getTime())
+
+    const dests = t.destinations || []
+    for (const d of dests) {
+      if (d.startDate) starts.push(new Date(d.startDate).getTime())
+      if (d.endDate) ends.push(new Date(d.endDate).getTime())
     }
-    const upcomingList = trips.filter((t) => toRangeEnd(t) >= now)
-    const pastList = trips.filter((t) => toRangeEnd(t) < now)
-    return { upcoming: upcomingList, past: pastList }
+
+    // fallback to createdAt if nothing else
+    const created = t.createdAt ? new Date(t.createdAt).getTime() : Date.now()
+
+    const startTime = starts.length ? Math.min(...starts) : created
+    const endTime = ends.length ? Math.max(...ends) : created
+
+    return { startTime, endTime }
+  }
+
+  // categorize trips into upcoming, ongoing, past
+  const { upcoming, ongoing, past } = useMemo(() => {
+    const now = Date.now()
+    const up = []
+    const on = []
+    const pa = []
+
+    for (const t of trips) {
+      const { startTime, endTime } = getRange(t)
+      if (endTime < now) {
+        pa.push(t)
+      } else if (startTime > now) {
+        up.push(t)
+      } else {
+        // start <= now <= end
+        on.push(t)
+      }
+    }
+
+    // optionally, sort each group by start date (soonest first)
+    const sortByStart = (arr) => arr.slice().sort((a,b) => getRange(a).startTime - getRange(b).startTime)
+    return { upcoming: sortByStart(up), ongoing: sortByStart(on), past: sortByStart(pa) }
   }, [trips])
 
-  const filtered = tab === 'All' ? trips : tab === 'Upcoming' ? upcoming : past
+  const filtered = useMemo(() => {
+    if (tab === 'All') return trips
+    if (tab === 'Upcoming') return upcoming
+    if (tab === 'Ongoing') return ongoing
+    if (tab === 'Past') return past
+    return trips
+  }, [tab, trips, upcoming, ongoing, past])
 
+  // chart uses past trips (same as before)
   const compareData = useMemo(() => {
-    const labels = (past.length ? past : trips).map(t => t.title)
-    const values = (past.length ? past : trips).map(t => (t.expenses||[]).reduce((s,e)=> s + Number(e.amount||0), 0))
+    const source = (past.length ? past : trips)
+    const labels = source.map(t => t.title)
+    const values = source.map(t => (t.expenses||[]).reduce((s,e)=> s + Number(e.amount||0), 0))
     return { labels, datasets: [{ label: 'Total Spent', data: values, backgroundColor: '#111827' }] }
   }, [trips, past])
 
@@ -59,7 +104,7 @@ export default function Profile() {
             <div className="ml-auto flex items-center gap-2">
               <div className="hidden sm:flex items-center gap-2">
                 <div className="text-sm text-gray-500">View:</div>
-                {['All','Upcoming','Past'].map((t) => (
+                {['All','Upcoming','Ongoing','Past'].map((t) => (
                   <button
                     key={t}
                     onClick={() => setTab(t)}
@@ -74,7 +119,7 @@ export default function Profile() {
 
           {/* mobile tabs under profile info */}
           <div className="mt-4 flex gap-2 sm:hidden">
-            {['All','Upcoming','Past'].map((t) => (
+            {['All','Upcoming','Ongoing','Past'].map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
@@ -105,7 +150,6 @@ export default function Profile() {
         <div className="grid md:grid-cols-2 gap-4">
           {filtered.map((trip) => (
             <div key={trip._id} className="bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-sm">
-              {/* keep TripCard as-is inside a card wrapper for consistent spacing */}
               <TripCard trip={trip} />
             </div>
           ))}

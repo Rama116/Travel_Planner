@@ -20,7 +20,8 @@ export default function TripDetail() {
   const [newActivityType, setNewActivityType] = useState('other')
   const [newActivityTime, setNewActivityTime] = useState('10:00')
   const [newActivityNotes, setNewActivityNotes] = useState('')
-  const [newExpense, setNewExpense] = useState({ category: 'Food', amount: 0 })
+  // <-- amount is an empty string so there's no default price
+  const [newExpense, setNewExpense] = useState({ category: 'Food', amount: '' })
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   useEffect(() => {
@@ -63,6 +64,13 @@ export default function TripDetail() {
   }
 
   async function addExpense() {
+    // require user to enter a valid amount (no default)
+    const amt = parseFloat(newExpense.amount)
+    if (isNaN(amt) || amt <= 0) {
+      alert('Please enter a valid amount greater than 0.')
+      return
+    }
+
     // derive date from selected day if trip has dates
     let date
     if (trip.tripStartDate) {
@@ -70,10 +78,12 @@ export default function TripDetail() {
       d.setDate(d.getDate() + (selectedDay - 1))
       date = d.toISOString()
     }
-    const expense = { id: crypto.randomUUID(), category: newExpense.category, amount: Number(newExpense.amount), date }
+
+    const expense = { id: crypto.randomUUID(), category: newExpense.category, amount: amt, date }
     const { data } = await api.post(`/trips/${id}/expenses`, { expense })
     setTrip((t) => ({ ...t, expenses: data.expenses }))
-    setNewExpense({ category: 'Food', amount: 0 })
+    // reset amount to empty string (no implicit defaults)
+    setNewExpense({ category: 'Food', amount: '' })
   }
 
   async function handleDelete() {
@@ -231,7 +241,16 @@ export default function TripDetail() {
                 <select value={newExpense.category} onChange={(e)=> setNewExpense(s=>({...s, category: e.target.value}))} className="border-2 border-gray-200 rounded-md px-2 py-1">
                   {['Flights','Lodging','Transport','Food','Activities','Other'].map(c=> <option key={c}>{c}</option>)}
                 </select>
-                <input type="number" value={newExpense.amount} onChange={(e)=> setNewExpense(s=>({...s, amount: e.target.value}))} className="border-2 border-gray-200 rounded-md px-2 py-1 w-24"/>
+                {/* amount input is now manual and required */}
+                <input
+                  type="number"
+                  value={newExpense.amount}
+                  onChange={(e)=> setNewExpense(s=>({...s, amount: e.target.value}))}
+                  className="border-2 border-gray-200 rounded-md px-2 py-1 w-28"
+                  placeholder="Amount"
+                  step="0.01"
+                  min="0"
+                />
                 <button onClick={addExpense} className="px-3 py-1.5 bg-gray-900 text-white rounded-md">Add</button>
               </div>
             </div>
