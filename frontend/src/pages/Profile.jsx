@@ -3,6 +3,10 @@ import { useSelector, useDispatch } from 'react-redux'
 import api from '../utils/api.js'
 import TripCard from '../components/TripCard.jsx'
 import { fetchTrips } from '../store/slices/tripsSlice.js'
+import { Bar } from 'react-chartjs-2'
+import { Chart, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js'
+
+Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend)
 
 export default function Profile() {
   const dispatch = useDispatch()
@@ -28,6 +32,12 @@ export default function Profile() {
 
   const filtered = tab === 'All' ? trips : tab === 'Upcoming' ? upcoming : past
 
+  const compareData = useMemo(() => {
+    const labels = (past.length ? past : trips).map(t => t.title)
+    const values = (past.length ? past : trips).map(t => (t.expenses||[]).reduce((s,e)=> s + Number(e.amount||0), 0))
+    return { labels, datasets: [{ label: 'Total Spent', data: values, backgroundColor: '#111827' }] }
+  }, [trips, past])
+
   return (
     <div className="space-y-6">
       <div className="card border rounded-2xl p-6 bg-white/80 backdrop-blur">
@@ -47,7 +57,14 @@ export default function Profile() {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="card border rounded-2xl p-4 bg-white">
+        <div className="font-medium mb-2">Past Trips Comparison</div>
+        <div className="h-64">
+          <Bar data={compareData} options={{ plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false }} />
+        </div>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4 mt-4">
         {filtered.map((trip) => (
           <TripCard key={trip._id} trip={trip} />
         ))}

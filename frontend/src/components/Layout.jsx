@@ -16,8 +16,9 @@ export default function Layout() {
     <div className="min-h-screen flex flex-col bg-[radial-gradient(1200px_600px_at_10%_-10%,rgba(0,0,0,0.03),transparent)]">
       <header className="border-b bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/70">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link to="/dashboard" className="text-xl font-semibold text-gray-900">Travel Planner</Link>
+          <Link to="/" className="text-xl font-semibold text-gray-900">Travel Planner</Link>
           <nav className="flex items-center gap-2">
+            <Link to="/" className="px-3 py-1.5 rounded-md hover:bg-gray-100 text-gray-800">Home</Link>
             {user ? (
               <>
                 <Link to="/dashboard" className="px-3 py-1.5 rounded-md hover:bg-gray-100 text-gray-800">Dashboard</Link>

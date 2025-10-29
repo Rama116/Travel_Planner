@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard.jsx'
 import TripCreate from './pages/TripCreate.jsx'
 import TripDetail from './pages/TripDetail.jsx'
 import Profile from './pages/Profile.jsx'
+import Home from './pages/Home.jsx'
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}> 
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/" element={<Home />} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/trips/new" element={<ProtectedRoute><TripCreate /></ProtectedRoute>} />
