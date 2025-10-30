@@ -20,6 +20,7 @@ const activitySchema = new mongoose.Schema(
     notes: { type: String },
     day: { type: Number, required: true },
     type: { type: String, enum: ['food','travel','sightseeing','stay','other'], default: 'other' },
+    completed: { type: Boolean, default: false },
   },
   { _id: false }
 );

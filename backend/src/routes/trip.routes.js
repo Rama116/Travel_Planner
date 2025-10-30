@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
 import { requireAuth } from '../middleware/auth.js';
-import { addActivity, addExpense, createTrip, deleteTrip, getTrip, listTrips, reorderActivities, updateNotes } from '../controllers/trip.controller.js';
+import { addActivity, addExpense, createTrip, deleteTrip, getTrip, listTrips, reorderActivities, updateNotes, updateActivityCompletion } from '../controllers/trip.controller.js';
 
 const router = Router();
 
@@ -24,6 +24,7 @@ router.put('/:id/activities/reorder', reorderActivities);
 router.post('/:id/expenses', addExpense);
 router.delete('/:id', deleteTrip);
 router.put('/:id/notes', updateNotes);
+router.patch('/:id/activities/:activityId/complete', updateActivityCompletion);
 
 export default router;
 

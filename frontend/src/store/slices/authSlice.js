@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import api from '../../utils/api.js'
 
-const tokenFromStorage = typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null
+const tokenFromStorage = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
 export const login = createAsyncThunk('auth/login', async (payload) => {
   const { data } = await api.post('/auth/login', payload)
@@ -13,7 +13,7 @@ export const signup = createAsyncThunk('auth/signup', async (payload) => {
   return data
 })
 
-const slice = createSlice({
+export const slice = createSlice({
   name: 'auth',
   initialState: { user: null, token: tokenFromStorage, status: 'idle', error: null },
   reducers: {

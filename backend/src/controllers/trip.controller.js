@@ -95,6 +95,22 @@ export async function updateNotes(req, res, next) {
   }
 }
 
+export async function updateActivityCompletion(req, res, next) {
+  try {
+    const { id, activityId } = req.params;
+    const { completed } = req.body;
+    const trip = await Trip.findOne({ _id: id, ownerId: req.user._id });
+    if (!trip) throw new HttpError(404, 'Trip not found');
+    const activity = trip.activities.find(a => a.id === activityId);
+    if (!activity) throw new HttpError(404, 'Activity not found');
+    activity.completed = !!completed;
+    await trip.save();
+    res.json({ activities: trip.activities });
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function deleteTrip(req, res, next) {
   try {
     const { id } = req.params;
