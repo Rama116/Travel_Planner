@@ -426,7 +426,8 @@ export default function TripDetail() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-sm">
+          {/* Itinerary - fixed height, scrollable list */}
+          <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-sm md:min-h-[370px] flex flex-col">
             <div className="flex items-center justify-between mb-2">
               <h2 className="font-medium text-gray-900">Itinerary · Day {selectedDay}</h2>
               <div className="flex flex-wrap gap-2 justify-end">
@@ -443,7 +444,11 @@ export default function TripDetail() {
             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId="activities">
                 {(provided) => (
-                  <div ref={provided.innerRef} {...provided.droppableProps} className="space-y-2">
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    className="space-y-2 flex-1 overflow-y-auto max-h-[260px] md:max-h-[320px] pr-1"
+                  >
                     {activitiesForDay.map((a, idx) => (
                       <Draggable key={a.id} draggableId={a.id} index={idx}>
                         {(prov) => (
@@ -466,7 +471,8 @@ export default function TripDetail() {
             </DragDropContext>
           </div>
 
-          <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-sm">
+          {/* Expenses - fixed height, no scroll needed for summary/chart/expense list */}
+          <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-sm md:min-h-[370px] flex flex-col">
             <div className="flex items-center justify-between mb-2">
               <h2 className="font-medium text-gray-900">Expenses · Day {selectedDay}</h2>
               <div className="flex flex-wrap items-center gap-2 justify-end">

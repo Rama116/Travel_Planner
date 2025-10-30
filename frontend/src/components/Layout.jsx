@@ -52,7 +52,7 @@ export default function Layout() {
                 </Link>
                 <Link
                   to="/profile"
-                  className="ml-1 h-10 w-10 rounded-full bg-gray-900 text-white flex items-center justify-center hover:bg-gray-800"
+                  className="ml-1 h-12 w-12 rounded-full bg-gray-900 text-white flex items-center justify-center hover:bg-gray-800"
                   aria-label="Profile"
                   style={{ minWidth: 40, minHeight: 40 }}
                 >
