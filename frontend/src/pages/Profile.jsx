@@ -90,25 +90,24 @@ export default function Profile() {
       <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-gray-900 opacity-5 rounded-full pointer-events-none" />
 
       {/* centered page container */}
-      <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
+      <div className="max-w-6xl mx-auto px-2 sm:px-4 py-6 sm:py-8 space-y-6">
         {/* profile card */}
-        <div className="bg-white/80 backdrop-blur border-2 border-gray-200 rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center gap-4">
+        <div className="bg-white/80 backdrop-blur border-2 border-gray-200 rounded-2xl p-4 sm:p-6 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="h-14 w-14 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 font-semibold text-lg">
               {user?.name?.slice(0,1) || 'U'}
             </div>
-            <div>
-              <div className="text-xl font-semibold text-gray-900">{user?.name || 'Your Profile'}</div>
-              <div className="text-sm text-gray-600">{user?.email}</div>
+            <div className="flex-1">
+              <div className="text-xl sm:text-2xl font-semibold text-gray-900">{user?.name || 'Your Profile'}</div>
+              <div className="text-sm sm:text-base text-gray-600">{user?.email}</div>
             </div>
-            <div className="ml-auto flex items-center gap-2">
-              <div className="hidden sm:flex items-center gap-2">
-                <div className="text-sm text-gray-500">View:</div>
+            <div className="sm:ml-auto flex flex-col sm:flex-row gap-3">
+              <div className="flex gap-2 justify-center"> {/* Tabs: horizontal on sm+, block on mobile */}
                 {['All','Upcoming','Ongoing','Past'].map((t) => (
                   <button
                     key={t}
                     onClick={() => setTab(t)}
-                    className={`px-3 py-1.5 rounded-full border ${tab === t ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                    className={`px-3 py-1.5 rounded-full border text-xs sm:text-sm ${tab === t ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
                   >
                     {t}
                   </button>
@@ -116,25 +115,12 @@ export default function Profile() {
               </div>
             </div>
           </div>
-
-          {/* mobile tabs under profile info */}
-          <div className="mt-4 flex gap-2 sm:hidden">
-            {['All','Upcoming','Ongoing','Past'].map((t) => (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
-                className={`px-3 py-1.5 rounded-full border ${tab === t ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* comparison chart card */}
-        <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-sm">
-          <div className="font-medium text-gray-800 mb-2">Past Trips Comparison</div>
-          <div className="h-64">
+        <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-sm overflow-x-auto">
+          <div className="font-medium text-gray-800 mb-2 text-base sm:text-lg">Past Trips Comparison</div>
+          <div className="h-48 min-w-[320px] md:h-64" style={{width:'100%',minWidth:'280px'}}>
             <Bar
               data={compareData}
               options={{
@@ -147,7 +133,7 @@ export default function Profile() {
         </div>
 
         {/* trips grid */}
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filtered.map((trip) => (
             <div key={trip._id} className="bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-sm">
               <TripCard trip={trip} />

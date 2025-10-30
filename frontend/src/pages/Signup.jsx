@@ -5,9 +5,9 @@ import { signup } from '../store/slices/authSlice.js'
 import { User, Mail, Lock, ArrowRight } from 'lucide-react'
 
 export default function Signup() {
-  const [name, setName] = useState('Demo User')
-  const [email, setEmail] = useState('demo@example.com')
-  const [password, setPassword] = useState('password123')
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const dispatch = useDispatch()

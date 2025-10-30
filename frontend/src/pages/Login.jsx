@@ -5,8 +5,8 @@ import { login } from '../store/slices/authSlice.js'
 import { Mail, Lock, ArrowRight } from 'lucide-react'
 
 export default function Login() {
-  const [email, setEmail] = useState('demo@example.com')
-  const [password, setPassword] = useState('password123')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const dispatch = useDispatch()
   const navigate = useNavigate()

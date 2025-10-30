@@ -13,6 +13,7 @@ export async function register(req, res, next) {
     if (existing) throw new HttpError(409, 'Email already in use');
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await User.create({ name, email, passwordHash });
+    console.log('👤 New user added to MongoDB:', user._id.toString(), user.email);
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'dev_secret', { expiresIn: '7d' });
     res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email } });
   } catch (err) {
